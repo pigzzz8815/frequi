@@ -162,6 +162,11 @@ const navItems = computed<NavItem[]>(() => [
     ],
   },
   {
+    label: 'Self-Improve',
+    to: '/self_improve',
+    icon: 'i-mdi-autorenew',
+  },
+  {
     label: 'Download Data',
     to: '/download_data',
     visible: botStore.isWebserverMode && botStore.activeBot.botFeatures.downloadDataView,
