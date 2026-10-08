@@ -43,6 +43,10 @@ interface Cycle {
   lookahead_ok: boolean;
   promoted: boolean;
   note?: string;
+  // 'params' cycles swap hyperopt parameters, 'code' cycles test a strategy variant
+  kind?: 'params' | 'code';
+  variant?: string;
+  hypothesis?: string;
 }
 
 const CHART_BASELINE = 'Current params';
@@ -136,6 +140,7 @@ const chartOptions = computed((): EChartsOption => {
 
 const tableColumns = [
   { accessorKey: 'ts', header: 'Cycle' },
+  { accessorKey: 'kind', header: 'Change' },
   { accessorKey: 'train_range', header: 'Train range', meta: { class: { td: 'font-mono' } } },
   { accessorKey: 'valid_range', header: 'Validation range', meta: { class: { td: 'font-mono' } } },
   { accessorKey: 'baseline', header: 'Current params' },
@@ -209,6 +214,15 @@ onMounted(load);
 
       <UTable :data="tableData" :columns="tableColumns">
         <template #ts-cell="{ row }">{{ formatTs(row.original.ts) }}</template>
+        <template #kind-cell="{ row }">
+          <UBadge :color="row.original.kind === 'code' ? 'primary' : 'neutral'" variant="subtle">
+            {{ row.original.kind === 'code' ? 'Code' : 'Params' }}
+          </UBadge>
+          <div v-if="row.original.kind === 'code'" class="text-sm whitespace-normal max-w-80">
+            <span class="font-mono">{{ row.original.variant }}</span>
+            {{ row.original.hypothesis }}
+          </div>
+        </template>
         <template #baseline-cell="{ row }">
           <span
             :class="
